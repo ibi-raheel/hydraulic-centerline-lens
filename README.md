@@ -28,7 +28,7 @@ npm run dev
 ```
 
 ## Data
-Real measurements from *Condition monitoring of hydraulic systems* by N. Helwig, E. Pignanelli and A. Schütze (2015), UCI Machine Learning Repository, doi:10.24432/C5CW21, licensed **CC BY 4.0**. The full dataset is used (2,205 cycles × 17 channels). No synthetic data enters the results.
+Real measurements from *Condition monitoring of hydraulic systems* by N. Helwig, E. Pignanelli and A. Schütze (2015), UCI ML Repository, doi:10.24432/C5CW21, licensed **CC BY 4.0**. The full dataset is used (2,205 cycles × 17 channels). No synthetic data enters the results.
 
 ---
 Built by Ibi Raheel, mechanical engineer building AI tools. More work at [ibiraheel.com](https://ibiraheel.com).

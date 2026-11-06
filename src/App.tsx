@@ -52,7 +52,7 @@ export function App() {
           <td style={cell}>{Object.keys(m.tag_importance).slice(0, 3).join(', ')}</td></tr>)}
       </tbody></table>
 
-      <p style={{ marginTop: 32, fontSize: 14 }}>Data: Helwig, Pignanelli, Schütze (2015), "Condition monitoring of hydraulic systems", UCI Machine Learning Repository, doi:10.24432/C5CW21, CC BY 4.0.
+      <p style={{ marginTop: 32, fontSize: 14 }}>Data: Helwig, Pignanelli, Schütze (2015), "Condition monitoring of hydraulic systems", UCI ML Repository, doi:10.24432/C5CW21, CC BY 4.0.
         Built by Ibi Raheel · <a href="https://ibiraheel.com">ibiraheel.com</a></p>
     </main>
   )

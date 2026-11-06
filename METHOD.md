@@ -3,7 +3,7 @@
 All numbers in the UI come from `pipeline/run.py` run on the full public dataset. Nothing is hand-entered or simulated.
 
 ## Data
-- **Dataset:** *Condition monitoring of hydraulic systems*, N. Helwig, E. Pignanelli, A. Schütze (2015), UCI Machine Learning Repository, doi:10.24432/C5CW21. **Licence: CC BY 4.0.**
+- **Dataset:** *Condition monitoring of hydraulic systems*, N. Helwig, E. Pignanelli, A. Schütze (2015), UCI ML Repository, doi:10.24432/C5CW21. **Licence: CC BY 4.0.**
 - **Size:** 2,205 load cycles of 60 s each, 17 channels at three rates: PS1–PS6 pressure (bar) and EPS1 motor power (W) at 100 Hz; FS1–FS2 volume flow (l/min) at 10 Hz; TS1–TS4 temperature, VS1 vibration, CE/CP virtual cooling efficiency/power and SE efficiency factor at 1 Hz. About 73 MB zipped, 700 MB as text. **The full set is used, with no subsetting.**
 - **Labels** (per cycle): cooler (3/20/100 %), valve (73/80/90/100 %), internal pump leakage (0/1/2), accumulator pre-charge (90/100/115/130 bar), stable flag.
 
