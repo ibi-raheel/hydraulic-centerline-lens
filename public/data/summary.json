@@ -180,7 +180,7 @@
    "acc_blocked": 0.9941,
    "acc_random": 0.9986,
    "acc_majority": 0.3361,
-   "published": "100% (Helwig et al. 2015)",
+   "published": "100% (Helwig et al. 2015, random split)",
    "confusion": [
     [
      726,
@@ -256,7 +256,7 @@
    "acc_blocked": 0.9107,
    "acc_random": 0.9846,
    "acc_majority": 0.5102,
-   "published": "100% (Helwig et al. 2015)",
+   "published": "100% (Helwig et al. 2015, random split)",
    "confusion": [
     [
      356,
@@ -340,7 +340,7 @@
    "acc_blocked": 0.9651,
    "acc_random": 0.9968,
    "acc_majority": 0.5537,
-   "published": "not quoted here",
+   "published": "not reported here (figure not verified from the source)",
    "confusion": [
     [
      1209,
@@ -416,7 +416,7 @@
    "acc_blocked": 0.7737,
    "acc_random": 0.9878,
    "acc_majority": 0.3664,
-   "published": "90.4% (Helwig et al. 2015); 99.65% (Schneider et al. 2017)",
+   "published": "90.4% (Helwig et al. 2015); 99.65% (Schneider et al. 2017); both random splits",
    "confusion": [
     [
      684,
@@ -491,5 +491,5 @@
    ]
   }
  ],
- "runtime_s": 18.9
+ "runtime_s": 31.5
 }

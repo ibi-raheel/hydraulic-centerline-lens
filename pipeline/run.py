@@ -122,8 +122,10 @@ def main(raw, out):
     # ---------- root cause models ----------
     rise = np.array([rise_time_s(ch["PS1"][i]) for i in range(n)])
     X, names = build_features(ch, {"PS1.rise_time": rise, "KPI.eff": eff, "KPI.p_hyd": k["p_hyd_kw"]})
-    published = {"cooler": "100% (Helwig et al. 2015)", "valve": "100% (Helwig et al. 2015)",
-                 "leak": "not quoted here", "accumulator": "90.4% (Helwig et al. 2015); 99.65% (Schneider et al. 2017)"}
+    # Published figures used random splits: compare them with acc_random, not acc_blocked.
+    published = {"cooler": "100% (Helwig et al. 2015, random split)", "valve": "100% (Helwig et al. 2015, random split)",
+                 "leak": "not reported here (figure not verified from the source)",
+                 "accumulator": "90.4% (Helwig et al. 2015); 99.65% (Schneider et al. 2017); both random splits"}
     models = []
     for target in ["cooler", "valve", "leak", "accumulator"]:
         y = prof[target].to_numpy()
