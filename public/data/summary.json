@@ -1,0 +1,495 @@
+{
+ "n_cycles": 2205,
+ "n_channels": 17,
+ "rates": {
+  "PS1": 100,
+  "PS2": 100,
+  "PS3": 100,
+  "PS4": 100,
+  "PS5": 100,
+  "PS6": 100,
+  "EPS1": 100,
+  "FS1": 10,
+  "FS2": 10,
+  "TS1": 1,
+  "TS2": 1,
+  "TS3": 1,
+  "TS4": 1,
+  "VS1": 1,
+  "CE": 1,
+  "CP": 1,
+  "SE": 1
+ },
+ "units": {
+  "PS1": "bar",
+  "PS2": "bar",
+  "PS3": "bar",
+  "PS4": "bar",
+  "PS5": "bar",
+  "PS6": "bar",
+  "EPS1": "W",
+  "FS1": "l/min",
+  "FS2": "l/min",
+  "TS1": "degC",
+  "TS2": "degC",
+  "TS3": "degC",
+  "TS4": "degC",
+  "VS1": "mm/s",
+  "CE": "%",
+  "CP": "kW",
+  "SE": "%"
+ },
+ "labels": {
+  "cooler": {
+   "3": 732,
+   "20": 732,
+   "100": 741
+  },
+  "valve": {
+   "73": 360,
+   "80": 360,
+   "90": 360,
+   "100": 1125
+  },
+  "leak": {
+   "0": 1221,
+   "1": 492,
+   "2": 492
+  },
+  "accumulator": {
+   "90": 808,
+   "100": 399,
+   "115": 399,
+   "130": 599
+  },
+  "stable_flag": {
+   "0": 1449,
+   "1": 756
+  }
+ },
+ "labels_match_doc": true,
+ "spec": [
+  {
+   "id": "R1",
+   "name": "Sample count matches declared rate",
+   "rule": "n_samples == 60 s * rate (6000 / 600 / 60)",
+   "fail": 0,
+   "pass": 2205,
+   "examples": []
+  },
+  {
+   "id": "R2",
+   "name": "Pressure within transducer range",
+   "rule": "0 <= PS1..PS6 <= 200 bar",
+   "fail": 0,
+   "pass": 2205,
+   "examples": []
+  },
+  {
+   "id": "R3",
+   "name": "No flatlined pressure channel",
+   "rule": "std(PS1) > 0.5 bar within cycle",
+   "fail": 0,
+   "pass": 2205,
+   "examples": []
+  },
+  {
+   "id": "R4",
+   "name": "Motor power physically plausible",
+   "rule": "1.5 kW <= EPS1 <= 3.5 kW",
+   "fail": 0,
+   "pass": 2205,
+   "examples": []
+  },
+  {
+   "id": "R5",
+   "name": "Efficiency factor dropout",
+   "rule": "SE == 0 for t >= 10 s (outside the known 8 s start-up zero)",
+   "fail": 0,
+   "pass": 2205,
+   "examples": []
+  },
+  {
+   "id": "R6",
+   "name": "Steady state reached",
+   "rule": "stable_flag == 0",
+   "fail": 756,
+   "pass": 1449,
+   "examples": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+   ]
+  },
+  {
+   "id": "R7",
+   "name": "Hydraulic power below motor power",
+   "rule": "P_hyd < P_motor (energy balance)",
+   "fail": 0,
+   "pass": 2205,
+   "examples": []
+  }
+ ],
+ "kpi": {
+  "hand": {
+   "cycle": 1790,
+   "t_s": 30.0,
+   "p_bar": 166.347,
+   "q_lpm": 7.831,
+   "p_motor_w": 2607.2,
+   "p_hyd_kw": 2.1711,
+   "eff_pct": 83.27,
+   "cycle_p_hyd_kw": 2.0359,
+   "cycle_p_motor_kw": 2.4603,
+   "cycle_eff_pct": 82.75,
+   "cycle_se_pct": 68.61
+  },
+  "fit": {
+   "slope": 0.7561,
+   "intercept": 5.693,
+   "r": 0.9991,
+   "resid_sd": 0.448
+  },
+  "eff_median": 82.29,
+  "se_median": 68.05,
+  "eff_by_leak": {
+   "0": 83.55,
+   "1": 79.92,
+   "2": 78.1
+  }
+ },
+ "rise_by_valve": {
+  "100": 0.67,
+  "90": 0.7,
+  "80": 0.705,
+  "73": 0.7
+ },
+ "models": [
+  {
+   "target": "cooler",
+   "classes": [
+    3,
+    20,
+    100
+   ],
+   "acc_blocked": 0.9941,
+   "acc_random": 0.9986,
+   "acc_majority": 0.3361,
+   "published": "100% (Helwig et al. 2015)",
+   "confusion": [
+    [
+     726,
+     0,
+     6
+    ],
+    [
+     1,
+     731,
+     0
+    ],
+    [
+     0,
+     6,
+     735
+    ]
+   ],
+   "tag_importance": {
+    "CE": 0.2954,
+    "CP": 0.2353,
+    "TS4": 0.1451,
+    "PS6": 0.1097,
+    "PS5": 0.0904,
+    "TS1": 0.0356,
+    "PS3": 0.0201,
+    "PS1": 0.0197,
+    "TS2": 0.0128,
+    "TS3": 0.0127,
+    "EPS1": 0.0119,
+    "PS2": 0.0053,
+    "FS2": 0.0029,
+    "VS1": 0.0025,
+    "FS1": 0.0003,
+    "PS4": 0.0002,
+    "SE": 0.0001,
+    "KPI": 0.0
+   },
+   "top_features": [
+    {
+     "name": "CE.p90",
+     "imp": 0.0727
+    },
+    {
+     "name": "CE.mean",
+     "imp": 0.0662
+    },
+    {
+     "name": "CE.p10",
+     "imp": 0.0603
+    },
+    {
+     "name": "CP.mean",
+     "imp": 0.0603
+    },
+    {
+     "name": "CP.max",
+     "imp": 0.0577
+    },
+    {
+     "name": "CE.max",
+     "imp": 0.0482
+    }
+   ]
+  },
+  {
+   "target": "valve",
+   "classes": [
+    73,
+    80,
+    90,
+    100
+   ],
+   "acc_blocked": 0.9107,
+   "acc_random": 0.9846,
+   "acc_majority": 0.5102,
+   "published": "100% (Helwig et al. 2015)",
+   "confusion": [
+    [
+     356,
+     1,
+     1,
+     2
+    ],
+    [
+     13,
+     303,
+     22,
+     22
+    ],
+    [
+     5,
+     14,
+     246,
+     95
+    ],
+    [
+     3,
+     5,
+     14,
+     1103
+    ]
+   ],
+   "tag_importance": {
+    "PS2": 0.2288,
+    "SE": 0.1655,
+    "FS1": 0.1512,
+    "PS1": 0.1269,
+    "EPS1": 0.063,
+    "KPI": 0.0381,
+    "TS2": 0.0275,
+    "TS1": 0.0256,
+    "PS6": 0.0251,
+    "PS3": 0.0246,
+    "TS3": 0.0201,
+    "PS5": 0.0197,
+    "TS4": 0.0181,
+    "VS1": 0.0155,
+    "CE": 0.0152,
+    "FS2": 0.015,
+    "CP": 0.0133,
+    "PS4": 0.0068
+   },
+   "top_features": [
+    {
+     "name": "PS2.slope",
+     "imp": 0.112
+    },
+    {
+     "name": "SE.slope",
+     "imp": 0.0801
+    },
+    {
+     "name": "PS2.std",
+     "imp": 0.0728
+    },
+    {
+     "name": "PS1.slope",
+     "imp": 0.0589
+    },
+    {
+     "name": "SE.mean",
+     "imp": 0.0429
+    },
+    {
+     "name": "FS1.mean",
+     "imp": 0.0384
+    }
+   ]
+  },
+  {
+   "target": "leak",
+   "classes": [
+    0,
+    1,
+    2
+   ],
+   "acc_blocked": 0.9651,
+   "acc_random": 0.9968,
+   "acc_majority": 0.5537,
+   "published": "not quoted here",
+   "confusion": [
+    [
+     1209,
+     12,
+     0
+    ],
+    [
+     0,
+     449,
+     43
+    ],
+    [
+     1,
+     21,
+     470
+    ]
+   ],
+   "tag_importance": {
+    "SE": 0.3701,
+    "FS1": 0.2419,
+    "KPI": 0.1175,
+    "EPS1": 0.0892,
+    "PS1": 0.0562,
+    "PS3": 0.0279,
+    "VS1": 0.0195,
+    "TS2": 0.0156,
+    "PS2": 0.0139,
+    "TS1": 0.0093,
+    "PS5": 0.0068,
+    "PS6": 0.0067,
+    "TS3": 0.0063,
+    "TS4": 0.0053,
+    "CP": 0.0048,
+    "FS2": 0.0039,
+    "PS4": 0.0035,
+    "CE": 0.0015
+   },
+   "top_features": [
+    {
+     "name": "SE.p90",
+     "imp": 0.1701
+    },
+    {
+     "name": "FS1.mean",
+     "imp": 0.1146
+    },
+    {
+     "name": "KPI.eff",
+     "imp": 0.0883
+    },
+    {
+     "name": "SE.mean",
+     "imp": 0.0786
+    },
+    {
+     "name": "FS1.p90",
+     "imp": 0.0778
+    },
+    {
+     "name": "SE.std",
+     "imp": 0.075
+    }
+   ]
+  },
+  {
+   "target": "accumulator",
+   "classes": [
+    90,
+    100,
+    115,
+    130
+   ],
+   "acc_blocked": 0.7737,
+   "acc_random": 0.9878,
+   "acc_majority": 0.3664,
+   "published": "90.4% (Helwig et al. 2015); 99.65% (Schneider et al. 2017)",
+   "confusion": [
+    [
+     684,
+     102,
+     18,
+     4
+    ],
+    [
+     145,
+     225,
+     29,
+     0
+    ],
+    [
+     5,
+     41,
+     300,
+     53
+    ],
+    [
+     27,
+     4,
+     71,
+     497
+    ]
+   ],
+   "tag_importance": {
+    "PS1": 0.1559,
+    "FS2": 0.1141,
+    "TS2": 0.0831,
+    "TS1": 0.08,
+    "TS4": 0.0746,
+    "TS3": 0.0679,
+    "PS5": 0.0628,
+    "PS6": 0.0586,
+    "EPS1": 0.0508,
+    "SE": 0.0442,
+    "PS3": 0.0395,
+    "VS1": 0.0346,
+    "CE": 0.0325,
+    "PS2": 0.0285,
+    "FS1": 0.0275,
+    "CP": 0.0202,
+    "PS4": 0.0165,
+    "KPI": 0.0088
+   },
+   "top_features": [
+    {
+     "name": "PS1.rise_time",
+     "imp": 0.118
+    },
+    {
+     "name": "FS2.mean",
+     "imp": 0.0285
+    },
+    {
+     "name": "FS2.p10",
+     "imp": 0.0283
+    },
+    {
+     "name": "FS2.p90",
+     "imp": 0.0249
+    },
+    {
+     "name": "TS4.mean",
+     "imp": 0.0188
+    },
+    {
+     "name": "PS5.p10",
+     "imp": 0.0176
+    }
+   ]
+  }
+ ],
+ "runtime_s": 18.9
+}

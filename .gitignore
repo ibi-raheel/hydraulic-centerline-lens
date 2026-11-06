@@ -1,0 +1,8 @@
+node_modules
+dist
+downloads
+pipeline/cache
+.venv
+__pycache__
+.pytest_cache
+.vercel
