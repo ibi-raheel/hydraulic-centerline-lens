@@ -1,59 +1,131 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { useData, pct } from './data'
+import type { Component } from './components/Schematic'
+import { useReducedMotion } from './hooks'
+import { RigStep } from './steps/RigStep'
+import { ContractStep } from './steps/ContractStep'
+import { KpiStep } from './steps/KpiStep'
+import { BandStep } from './steps/BandStep'
+import { CalibStep } from './steps/CalibStep'
+import { FaultStep } from './steps/FaultStep'
+import { CostStep } from './steps/CostStep'
+import { ProofStep } from './steps/ProofStep'
 
-// Minimal results page. The guided-story UI is a later pass; this only proves the static JSON loads.
-type Model = { target: string; acc_blocked: number; acc_random: number; acc_majority: number; published: string; tag_importance: Record<string, number> }
-type Summary = {
-  n_cycles: number; n_channels: number; labels_match_doc: boolean
-  spec: { id: string; name: string; rule: string; pass: number; fail: number }[]
-  kpi: { hand: Record<string, number>; fit: { slope: number; intercept: number; r: number; resid_sd: number }; eff_by_leak: Record<string, number> }
-  models: Model[]
+const STEPS = [
+  { id: 'rig', short: 'The rig' },
+  { id: 'contract', short: 'Data contract' },
+  { id: 'kpi', short: 'A KPI you can trust' },
+  { id: 'band', short: 'Golden-run bands' },
+  { id: 'context', short: 'Calibrated for context' },
+  { id: 'fault', short: 'Which component' },
+  { id: 'cost', short: 'What it costs' },
+  { id: 'proof', short: 'How we know' },
+]
+
+function Step({ n, id, title, lede, children }: { n: number; id: string; title: string; lede: ReactNode; children: ReactNode }) {
+  return (
+    <section className="step" id={id} data-step={n} aria-labelledby={`${id}-h`}>
+      <header className="step-head">
+        <h2 id={`${id}-h`}><span className="step-num mono" aria-hidden="true">{n}</span>{title}</h2>
+        <p className="lede">{lede}</p>
+      </header>
+      {children}
+    </section>
+  )
 }
-type Cond = { component: string; level: number; n: number; alarm_rate: number; tag_rate: Record<string, number> }
-type Env = { n_golden: number; loo_false_alarm: number; k: number; alarm_frac: number; conditions: Cond[] }
-
-const pct = (x: number) => `${(100 * x).toFixed(1)}%`
-const cell = { padding: '4px 10px', borderBottom: '1px solid #ccc', textAlign: 'left' as const }
 
 export function App() {
-  const [s, setS] = useState<Summary | null>(null)
-  const [e, setE] = useState<Env | null>(null)
+  const { d, err } = useData()
+  const reduced = useReducedMotion()
+  const [active, setActive] = useState(1)
+  const [comp, setComp] = useState<Component>('valve')
+  const [physics, setPhysics] = useState(true)
+  const [picked, setPicked] = useState<Component | null>(null)
+  const main = useRef<HTMLElement>(null)
+
   useEffect(() => {
-    fetch('/data/summary.json').then(r => r.json()).then(setS)
-    fetch('/data/envelope.json').then(r => r.json()).then(setE)
-  }, [])
-  if (!s || !e) return <p style={{ fontFamily: 'system-ui', padding: 24 }}>Loading results…</p>
-  const h = s.kpi.hand
+    if (!d || !main.current) return
+    const secs = Array.from(main.current.querySelectorAll<HTMLElement>('section.step'))
+    const io = new IntersectionObserver(entries => {
+      for (const e of entries) if (e.isIntersecting) setActive(Number((e.target as HTMLElement).dataset.step))
+    }, { rootMargin: '-45% 0px -50% 0px' })
+    secs.forEach(s => io.observe(s))
+    return () => io.disconnect()
+  }, [d])
+
+  const go = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' })
+  const onPick = (c: Component) => { setComp(c); setPicked(c); go('fault') }
+
+  if (err) return <main className="state"><p>{err}</p></main>
+  if (!d) return <main className="state" aria-busy="true"><p className="mono">Loading 2,205 cycles of results…</p></main>
+
+  const v = d.x.models.find(m => m.target === 'valve')!
+  const a = d.x.models.find(m => m.target === 'accumulator')!
+  const sc = d.x.calibration.modes.single_context.at_k4_f5.false_alarm
+  const pc = d.x.calibration.modes.per_context.operating_point.false_alarm
+  const e1 = d.x.value.energy.leak1.median
+
   return (
-    <main style={{ fontFamily: 'system-ui, sans-serif', maxWidth: 960, margin: '0 auto', padding: 24, lineHeight: 1.45 }}>
-      <h1>Hydraulic Centerline Lens</h1>
-      <p>{s.n_cycles.toLocaleString()} real 60 s load cycles, {s.n_channels} sensor channels, from the UCI hydraulic test-rig dataset (CC BY 4.0).</p>
+    <>
+      <nav className="rail" aria-label="Steps">
+        <ol>
+          {STEPS.map((s, i) => (
+            <li key={s.id}>
+              <a href={`#${s.id}`} aria-current={active === i + 1 ? 'step' : undefined} onClick={ev => { ev.preventDefault(); go(s.id) }}>
+                <span className="rail-n mono">{i + 1}</span><span className="rail-t">{s.short}</span>
+              </a>
+            </li>
+          ))}
+        </ol>
+      </nav>
+      <div className="topbar" aria-hidden="true">
+        <div className="topbar-segs">{STEPS.map((s, i) => <i key={s.id} className={i + 1 <= active ? 'on' : ''} />)}</div>
+        <div className="topbar-t"><span className="mono">{active}/{STEPS.length}</span> {STEPS[active - 1].short}</div>
+      </div>
 
-      <h2>1. Data contract</h2>
-      <table style={{ borderCollapse: 'collapse' }}><tbody>
-        {s.spec.map(r => <tr key={r.id}><td style={cell}>{r.id}</td><td style={cell}>{r.name}</td><td style={cell}><code>{r.rule}</code></td><td style={cell}>{r.pass} pass / {r.fail} fail</td></tr>)}
-      </tbody></table>
-      <p>Label counts match the dataset documentation: {s.labels_match_doc ? 'yes' : 'no'}.</p>
+      <main ref={main}>
+        <header className="intro">
+          <h1>Hydraulic Centerline Lens</h1>
+          <p>An acceptance kit for plant sensor data, run on {d.s.n_cycles.toLocaleString()} real cycles of a hydraulic test rig: a KPI you can check by hand, golden-run bands per sensor, and a fault model for each component.</p>
+        </header>
 
-      <h2>2. Hydraulic power, checked by hand</h2>
-      <p>Cycle {h.cycle}, t = {h.t_s} s: P_hyd = p·Q/600 = {h.p_bar} bar × {h.q_lpm} l/min / 600 = <b>{h.p_hyd_kw} kW</b>.
-        Cycle mean: {h.cycle_p_hyd_kw} kW hydraulic / {h.cycle_p_motor_kw} kW motor = {h.cycle_eff_pct}% (rig SE channel: {h.cycle_se_pct}%).</p>
-      <p>Across all cycles, derived efficiency vs rig SE: r = {s.kpi.fit.r}, SE ≈ {s.kpi.fit.slope}·η + {s.kpi.fit.intercept}, residual SD {s.kpi.fit.resid_sd} pts.</p>
+        <Step n={1} id="rig" title="The rig" lede={<>One 60 s load cycle, repeated {d.s.n_cycles.toLocaleString()} times while four components are set to known fault levels. {d.s.n_channels} channels record it.</>}>
+          <RigStep d={d} onPick={onPick} active={picked} />
+        </Step>
 
-      <h2>3. Golden-run centerline</h2>
-      <p>{e.n_golden} golden cycles, band = median ± {e.k}·1.4826·MAD per 0.1 s bin. Leave-one-out false alarms: {e.loo_false_alarm}/{e.n_golden}.</p>
-      <table style={{ borderCollapse: 'collapse' }}><thead><tr><th style={cell}>Fault</th><th style={cell}>n</th><th style={cell}>Alarm rate</th><th style={cell}>Tags out of band</th></tr></thead><tbody>
-        {e.conditions.map(c => <tr key={c.component + c.level}><td style={cell}>{c.component} = {c.level}</td><td style={cell}>{c.n}</td><td style={cell}>{pct(c.alarm_rate)}</td>
-          <td style={cell}>{Object.entries(c.tag_rate).filter(([, v]) => v >= 0.5).map(([k]) => k).join(', ') || 'none'}</td></tr>)}
-      </tbody></table>
+        <Step n={2} id="contract" title="The data contract" lede={<>Eleven rules run before any KPI. The seven range rules caught 1 of 5 injected defect types; four physics rules catch the rest.</>}>
+          <ContractStep d={d} />
+        </Step>
 
-      <h2>4. Root cause classifiers</h2>
-      <table style={{ borderCollapse: 'collapse' }}><thead><tr><th style={cell}>Component</th><th style={cell}>Blocked CV</th><th style={cell}>Shuffled CV</th><th style={cell}>Majority</th><th style={cell}>Published</th><th style={cell}>Top tags</th></tr></thead><tbody>
-        {s.models.map(m => <tr key={m.target}><td style={cell}>{m.target}</td><td style={cell}>{pct(m.acc_blocked)}</td><td style={cell}>{pct(m.acc_random)}</td><td style={cell}>{pct(m.acc_majority)}</td><td style={cell}>{m.published}</td>
-          <td style={cell}>{Object.keys(m.tag_importance).slice(0, 3).join(', ')}</td></tr>)}
-      </tbody></table>
+        <Step n={3} id="kpi" title="A KPI you can trust" lede={<>Hydraulic efficiency from two sensors, worked by hand, matches the pipeline and tracks the rig's own efficiency channel at r = {d.s.kpi.fit.r}.</>}>
+          <KpiStep d={d} />
+        </Step>
 
-      <p style={{ marginTop: 32, fontSize: 14 }}>Data: Helwig, Pignanelli, Schütze (2015), "Condition monitoring of hydraulic systems", UCI ML Repository, doi:10.24432/C5CW21, CC BY 4.0.
-        Built by Ibi Raheel · <a href="https://ibiraheel.com">ibiraheel.com</a></p>
-    </main>
+        <Step n={4} id="band" title="Golden-run bands" lede={<>{d.e.n_golden} golden cycles set a band for every sensor. Pick a fault and watch the trace leave it.</>}>
+          <BandStep d={d} />
+        </Step>
+
+        <Step n={5} id="context" title="Calibrated for context" lede={<>One golden set raised false alarms on {sc.k} of {sc.n} healthy cycles. One band per operating context gets that to {pc.k} of {pc.n}.</>}>
+          <CalibStep d={d} />
+        </Step>
+
+        <Step n={6} id="fault" title="Which component is failing" lede={<>Physics features lift valve accuracy from {pct(v.base.blocked)} to {pct(v.with_physics.blocked)} and accumulator from {pct(a.base.blocked)} to {pct(a.with_physics.blocked)} on blocked validation. Toggle them.</>}>
+          <FaultStep d={d} comp={comp} setComp={setComp} physics={physics} setPhysics={setPhysics} />
+        </Step>
+
+        <Step n={7} id="cost" title="What it costs" lede={<>Weak pump leakage costs {Math.abs(d.x.value.leak1.eff_pts.median).toFixed(1)} efficiency points: {e1.extra_motor_pct.toFixed(1)} % more motor energy for the same hydraulic work.</>}>
+          <CostStep d={d} />
+        </Step>
+
+        <Step n={8} id="proof" title="How we know it's right" lede={<>Neighbouring cycles are near-duplicates, so shuffled validation flatters. Scored on contiguous blocks, the accumulator drops from {pct(d.x.block_sensitivity.accumulator.shuffled)} to {pct(a.base.blocked)}.</>}>
+          <ProofStep d={d} />
+        </Step>
+
+        <footer className="foot">
+          <p>Data: N. Helwig, E. Pignanelli, A. Schütze (2015), <i>Condition monitoring of hydraulic systems</i>, UCI ML Repository, doi:10.24432/C5CW21, licensed CC BY 4.0. Full dataset, no subsetting; results precomputed by the pipeline in this repository.</p>
+          <p>Built by Ibi Raheel, mechanical engineer building AI tools. More work at <a href="https://ibiraheel.com">ibiraheel.com</a>.</p>
+        </footer>
+      </main>
+    </>
   )
 }
