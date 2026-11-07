@@ -2,7 +2,7 @@
 
 **Question.** When a new production line goes live on a data platform, how many golden runs does a centerline need before its alarms can be trusted, and how do you prove the KPIs and cleansing rules are right before anyone acts on them?
 
-**Answer, measured on 2,205 real cycles of a hydraulic test rig.** Copying one golden set across operating conditions gave 70 % false alarms (21 of 30 healthy cycles). About 9 golden cycles per condition fixed it (0 of 30) and still caught all 60 leakage cycles. Four physics checks caught 96 % of injected data defects, against 20 % for range checks.
+**Answer, measured on 2,205 real cycles of a hydraulic test rig.** Copying one golden set across operating conditions gave 70 % false alarms (21 of 30 healthy cycles). About 9 golden cycles per condition fixed it (0 of 30) and still caught all 60 leakage cycles. On injected data defects, adding four physics checks to the range checks lifted the catch rate from 20 % to 96 %.
 
 Every number below comes from `public/data/summary.json` and `public/data/extended.json`, produced by the pipeline in this repository. Equations and validation are in [METHOD.md](METHOD.md).
 
@@ -10,7 +10,7 @@ Every number below comes from `public/data/summary.json` and `public/data/extend
 
 1. **Contract first.** Run all 11 rules on the extract before any KPI: 7 range rules plus 4 physics rules (tag order, edge alignment, KPI consistency, stuck sensor). Gate on steady state: unsteady healthy cycles alarmed 232 of 233 times. A cycle that fails is labelled "fix the data", not a process alarm.
 2. **Hand-check one KPI with the plant engineer.** η = (p·Q/600) / P_motor, worked for one instant and recomputed independently. Only then publish it.
-3. **One golden set per operating context, never one global set.** Collect at least 9 healthy steady-state cycles per context before the band goes live. Below 7, expect false alarms.
+3. **One golden set per operating context, never one global set.** Collect at least 9 healthy steady-state cycles per context before the band goes live. Below 7, expect false alarms. These counts are this rig's; the tool's golden-count curve re-measures them on a new line.
 4. **Earn the false-alarm claim.** You need 30 alarm-free validation cycles per context to say 10 % or less, and 60 to say 5 % or less. Report the Wilson upper bound, not just "0 alarms".
 5. **Score models on contiguous blocks, not shuffled splits.** Only models that hold up on blocked CV go into recommendation mode. The rest run in shadow mode.
 
@@ -18,7 +18,7 @@ Every number below comes from `public/data/summary.json` and `public/data/extend
 
 | Decision | Rule | Measured on this rig |
 | --- | --- | --- |
-| Is the extract fit to score? | All 11 contract rules pass, steady state reached | Range rules alone caught 1 of 5 injected defect types (20 %); all 11 caught 95.7 %. The 4 physics rules fail on only 11 of 2,205 real cycles. |
+| Is the extract fit to score? | All 11 contract rules pass, steady state reached | Range rules alone caught 1 of 5 injected defect types (20 % of injected defects); all 11 caught 95.7 %. The 4 physics rules fail on only 11 of 2,205 real cycles. |
 | Is the KPI right? | Hand calculation equals the pipeline value | 166.347 bar × 7.831 l/min / 600 = 2.171 kW (cycle 1790, t = 30 s); η tracks the rig's own efficiency channel at r = 0.9991 |
 | One band or several? | One band per operating context | One golden set: 21/30 false alarms (70 %, CI 52–83 %). Per context: 0/30 (95 % upper bound 11.4 %) |
 | Enough golden cycles? | ≥ 9 per context | False alarms 99.9 % at 3, 24 % at 5, 2.9 % at 7, 0 in 900 held-out tests at 9 |

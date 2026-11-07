@@ -94,7 +94,9 @@ export function App() {
             <p className="kicker mono">The question</p>
             <p className="qa-q">How many golden runs before a centerline can be trusted?</p>
             <p className="kicker mono">The answer, measured on {d.s.n_cycles.toLocaleString()} real cycles</p>
-            <p className="qa-a">One golden set copied across operating conditions false-alarmed on {sc.k} of {sc.n} healthy cycles. One band per condition, built from about 9 golden cycles each: {pc.k} of {pc.n}, with all {leakN} leakage cycles still caught.</p>
+            <p className="qa-a"><strong className="qa-big">About 9 per operating condition.</strong> One golden set copied across conditions false-alarmed on {sc.k} of {sc.n} healthy cycles. One band per condition: {pc.k} of {pc.n}, with all {leakN} leakage cycles still caught.</p>
+            <p className="kicker mono">The solution</p>
+            <p className="qa-a">A five-step acceptance recipe and a small tool that says, per condition, whether a line's centerline is ready to trust.</p>
             <a className="qa-link" href="#solution" onClick={ev => { ev.preventDefault(); go('solution') }}>Here's the playbook <span aria-hidden="true">→</span></a>
             <p className="fine">Real hydraulic test-rig data (UCI, CC BY 4.0). Every KPI checked by hand.</p>
           </div>
@@ -136,7 +138,7 @@ export function App() {
           <SolutionStep d={d} />
         </Step>
 
-        <p className="closing">Built on public test-rig data. On a real line, week one is: run the contract, collect golden cycles per context, hand back the recipe.</p>
+        <p className="closing">Built on public test-rig data, so these thresholds are this rig's. On a real line, week one re-measures them: run the contract, collect golden cycles per context, hand back the recipe with that line's numbers.</p>
 
         <footer className="foot">
           <p>Data: N. Helwig, E. Pignanelli, A. Schütze (2015), <i>Condition monitoring of hydraulic systems</i>, UCI ML Repository, doi:10.24432/C5CW21, licensed CC BY 4.0. Full dataset, no subsetting; results precomputed by the pipeline in this repository.</p>

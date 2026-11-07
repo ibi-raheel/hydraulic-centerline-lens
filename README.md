@@ -2,7 +2,7 @@
 
 **The question.** When a new production line goes live on a data platform, how many golden runs does a centerline need before its alarms can be trusted, and how do you prove the KPIs and cleansing rules are right before anyone acts on them?
 
-**The answer, measured on 2,205 real cycles.** Copying one golden set across operating conditions gave 70 % false alarms (21 of 30 healthy cycles). About 9 golden cycles per condition fixed it (0 of 30) and still caught all 60 leakage cycles. Four physics checks caught 96 % of injected data defects, against 20 % for range checks.
+**The answer, measured on 2,205 real cycles.** Copying one golden set across operating conditions gave 70 % false alarms (21 of 30 healthy cycles). About 9 golden cycles per condition fixed it (0 of 30) and still caught all 60 leakage cycles. On injected data defects, adding four physics checks to the range checks lifted the catch rate from 20 % to 96 %.
 
 **The solution.** A one-page acceptance recipe and a small tool, `pipeline/accept.py`: give it a line's extract and the cycles you call golden, and it checks the data against 11 rules, says how many more golden cycles each context needs, and labels every cycle "fix the data", "in band" or "out of band". See **[SOLUTION.md](SOLUTION.md)** for the playbook, the decision thresholds, the week-1 plan and how to run it.
 

@@ -57,6 +57,7 @@ main { max-width: 1020px; margin: 0 auto; padding: 0 24px; }
 .intro .kicker { margin: 0 0 6px; font-size: 12px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--blue-deep); }
 .intro .qa-q { font: 600 clamp(24px, 3vw, 31px)/1.15 var(--font-cond); letter-spacing: -0.01em; color: var(--ink); margin: 0 0 22px; text-wrap: balance; }
 .intro .qa-a { margin: 0 0 18px; }
+.intro .qa-big { display: block; font: 600 clamp(22px, 2.6vw, 27px)/1.2 var(--font-cond); color: var(--ink); margin-bottom: 6px; }
 .qa-link { display: inline-flex; align-items: center; gap: 8px; padding: 9px 14px; border-radius: 8px; background: var(--ink); color: #fff; text-decoration: none; font: 500 16px/1.1 var(--font-cond); transition: transform 160ms var(--ease-out), background-color 160ms ease; }
 .qa-link span { transition: transform 200ms var(--ease-out); }
 .qa-link:active { transform: scale(0.97); }

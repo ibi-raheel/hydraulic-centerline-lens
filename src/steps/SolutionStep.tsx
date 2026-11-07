@@ -8,7 +8,7 @@ function recipe(d: Data): [string, string][] {
   const acc = d.x.models.find(m => m.target === 'accumulator')!
   const gap = Math.round((d.x.block_sensitivity.accumulator.shuffled - acc.base.blocked) * 100)
   return [
-    ['Run the data contract first: 11 rules, steady state gated.', `range rules alone caught ${Math.round(d.x.mutations.caught_7 * 100)} % of injected defect types; all 11 catch ${(d.x.mutations.caught_11 * 100).toFixed(1)} %`],
+    ['Run the data contract first: 11 rules, steady state gated.', `injected defects caught: ${Math.round(d.x.mutations.caught_7 * 100)} % by the 7 range rules, ${(d.x.mutations.caught_11 * 100).toFixed(1)} % by all 11`],
     ['Hand-check one KPI before you publish it.', `${d.s.kpi.hand.p_bar} bar × ${d.s.kpi.hand.q_lpm} l/min / 600 = ${d.s.kpi.hand.p_hyd_kw.toFixed(3)} kW`],
     ['One golden set per operating context, at least 9 cycles each.', `false alarms ${r7 ? (r7.fa_mean * 100).toFixed(1) : '–'} % at 7, ${r9 ? `${r9.alarms} in ${r9.tests.toLocaleString()} tests` : '–'} at 9`],
     ['30 alarm-free validation cycles per context to claim ≤10 % false alarms, 60 for ≤5 %.', `rule of three: ${ss.rule_of_three.for_10pct} and ${ss.rule_of_three.for_5pct} cycles`],
@@ -31,9 +31,9 @@ export function SolutionStep({ d }: { d: Data }) {
         <figcaption className="chart-title">The tool: your extract and the cycles you call golden in, a verdict per context and per cycle out</figcaption>
         <pre className="mono"><code>
           <span className="term-cmd">$ python -I pipeline/accept.py extract/ --golden golden.txt --context cooler</span>
-          <span>context 3: 10 golden, ready; 0/10 validation alarms, 20 more alarm-free cycles for ≤10%</span>
-          <span className="term-out">cycle 282: OUT OF BAND, PS5 PS6 FS1 FS2, leakage signature</span>
-          <span className="term-data">cycle 634: DATA, R9 edge alignment failed: fix the extract</span>
+          <span>context 3: 10 golden, ready; 0/10 validation alarms (Wilson upper 27.8%), 20 more alarm-free cycles for ≤10%</span>
+          <span className="term-out">cycle 282: OUT OF BAND, PS5 PS6 FS1 FS2, leakage signature: main flow FS1 out of band</span>
+          <span className="term-data">cycle 634: DATA, failed R9 (edge alignment)</span>
         </code></pre>
         <p className="fine">Real output on this rig (abridged), with the {d.x.calibration.n_healthy} healthy cycles as golden. The steps, thresholds and a week-one plan are in SOLUTION.md in the repository.</p>
       </figure>
