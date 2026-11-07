@@ -1,8 +1,14 @@
 # Hydraulic Centerline Lens
 
-An acceptance kit for plant sensor data. It turns a raw multi-rate extract from a real hydraulic test rig into hand-checked KPIs, golden-run centerlines and per-component root-cause models.
+**The question.** When a new production line goes live on a data platform, how many golden runs does a centerline need before its alarms can be trusted, and how do you prove the KPIs and cleansing rules are right before anyone acts on them?
+
+**The answer, measured on 2,205 real cycles.** Copying one golden set across operating conditions gave 70 % false alarms (21 of 30 healthy cycles). About 9 golden cycles per condition fixed it (0 of 30) and still caught all 60 leakage cycles. Four physics checks caught 96 % of injected data defects, against 20 % for range checks.
+
+**The solution.** A one-page acceptance recipe and a small tool, `pipeline/accept.py`: give it a line's extract and the cycles you call golden, and it checks the data against 11 rules, says how many more golden cycles each context needs, and labels every cycle "fix the data", "in band" or "out of band". See **[SOLUTION.md](SOLUTION.md)** for the playbook, the decision thresholds, the week-1 plan and how to run it.
 
 **Live demo:** DEMO_URL_PLACEHOLDER
+
+It runs on a raw multi-rate extract from a real hydraulic test rig and produces hand-checked KPIs, golden-run centerlines and per-component root-cause models.
 
 ## The problem
 When a team delivers KPIs and models on top of plant data, someone has to show that the numbers are right: that the formula is the right one, that bad cycles are filtered out, and that a "golden run" really is golden. Usually that check is reviewer judgment. This project makes it executable: the spec is a test suite, and every KPI traces back to an equation.
@@ -23,7 +29,8 @@ When a team delivers KPIs and models on top of plant data, someone has to show t
 ## How it works
 - `pipeline/hcl/`: loader and resampling to a common 10 Hz grid, spec rules, KPIs, envelopes and calibration, physics features, statistics, value analysis, mutations (numpy, pandas, scipy, scikit-learn).
 - `pipeline/run.py` (about 20 s) and `pipeline/run_extended.py` (about 2.5 min) run the full pipeline offline and write static JSON to `public/data/`.
-- `pipeline/tests/`: 34 pytest tests, including hand calculations, synthetic recoveries (labelled) and checks on the outputs.
+- `pipeline/accept.py`: the acceptance tool, a thin wrapper over `hcl/` (see SOLUTION.md).
+- `pipeline/tests/`: 36 pytest tests, including hand calculations, synthetic recoveries (labelled) and checks on the outputs.
 - The front end is Vite + React and reads only the precomputed JSON, so it needs no API keys.
 - See [METHOD.md](METHOD.md) for the equations, validation, limitations and a week-1 deployment plan.
 

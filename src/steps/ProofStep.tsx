@@ -83,7 +83,7 @@ export function ProofStep({ d }: { d: Data }) {
           <thead><tr><th>Check</th><th>Result</th></tr></thead>
           <tbody>{VALIDATION.map(([a, b]) => <tr key={a}><td>{a}</td><td>{b}</td></tr>)}</tbody>
         </table></div>
-        <p className="fine">34 pytest tests cover the hand calculations, synthetic recoveries (labelled) and checks on the outputs. Full equations, assumptions and limitations are in METHOD.md in the repository.</p>
+        <p className="fine">36 pytest tests cover the hand calculations, synthetic recoveries (labelled) and checks on the outputs. Full equations, assumptions and limitations are in METHOD.md in the repository.</p>
       </Details>
     </div>
   )

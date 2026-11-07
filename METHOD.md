@@ -1,5 +1,10 @@
 # Method
 
+## Research question
+When a new production line goes live on a data platform, how many golden runs does a centerline need before its alarms can be trusted, and how do you prove the KPIs and cleansing rules are right before anyone acts on them?
+
+Measured answer on this dataset: one golden set copied across operating contexts false-alarmed on 21 of 30 healthy cycles; one band per context gets 0 of 30 and needs about 9 golden cycles per context (pipeline step 7). The 11-rule contract catches 95.7 % of injected defect types against 20 % for the 7 range rules (pipeline step 11), and the efficiency KPI is checked by hand (pipeline step 4). The resulting recipe and tool are in [SOLUTION.md](SOLUTION.md).
+
 All numbers come from `pipeline/run.py` and `pipeline/run_extended.py` run on the full public dataset. Nothing is hand-entered or simulated. The only synthetic inputs are in unit tests and in the contract mutation test (section 10), and they are labelled.
 
 ## Data
@@ -125,6 +130,7 @@ uv venv .venv && uv pip install --python .venv/bin/python numpy pandas scipy sci
 OMP_NUM_THREADS=2 .venv/bin/python -I pipeline/run.py downloads/raw public/data            # ~20 s
 OMP_NUM_THREADS=2 .venv/bin/python -I pipeline/run_extended.py downloads/raw public/data   # ~2.5 min -> extended.json
 .venv/bin/python -m pytest -q pipeline/tests
+OMP_NUM_THREADS=2 .venv/bin/python -I pipeline/accept.py downloads/raw --golden golden.txt --context cooler --out report.json   # acceptance report, see SOLUTION.md
 ```
 
 ## Week 1 on a production line (built only from the numbers above)

@@ -10,6 +10,7 @@ import { CalibStep } from './steps/CalibStep'
 import { FaultStep } from './steps/FaultStep'
 import { CostStep } from './steps/CostStep'
 import { ProofStep } from './steps/ProofStep'
+import { SolutionStep } from './steps/SolutionStep'
 
 const STEPS = [
   { id: 'rig', short: 'The rig' },
@@ -20,6 +21,7 @@ const STEPS = [
   { id: 'fault', short: 'Which component' },
   { id: 'cost', short: 'What it costs' },
   { id: 'proof', short: 'How we know' },
+  { id: 'solution', short: 'The solution' },
 ]
 
 function Step({ n, id, title, lede, children }: { n: number; id: string; title: string; lede: ReactNode; children: ReactNode }) {
@@ -64,6 +66,8 @@ export function App() {
   const sc = d.x.calibration.modes.single_context.at_k4_f5.false_alarm
   const pc = d.x.calibration.modes.per_context.operating_point.false_alarm
   const e1 = d.x.value.energy.leak1.median
+  const leak = d.x.calibration.modes.per_context.operating_point.conditions.filter(c => c.component === 'leak')
+  const leakN = leak.reduce((t, c) => t + c.n, 0)
 
   return (
     <>
@@ -86,7 +90,14 @@ export function App() {
       <main ref={main}>
         <header className="intro">
           <h1>Hydraulic Centerline Lens</h1>
-          <p>An acceptance kit for plant sensor data, run on {d.s.n_cycles.toLocaleString()} real cycles of a hydraulic test rig: a KPI you can check by hand, golden-run bands per sensor, and a fault model for each component.</p>
+          <div className="qa">
+            <p className="kicker mono">The question</p>
+            <p className="qa-q">How many golden runs before a centerline can be trusted?</p>
+            <p className="kicker mono">The answer, measured on {d.s.n_cycles.toLocaleString()} real cycles</p>
+            <p className="qa-a">One golden set copied across operating conditions false-alarmed on {sc.k} of {sc.n} healthy cycles. One band per condition, built from about 9 golden cycles each: {pc.k} of {pc.n}, with all {leakN} leakage cycles still caught.</p>
+            <a className="qa-link" href="#solution" onClick={ev => { ev.preventDefault(); go('solution') }}>Here's the playbook <span aria-hidden="true">→</span></a>
+            <p className="fine">Real hydraulic test-rig data (UCI, CC BY 4.0). Every KPI checked by hand.</p>
+          </div>
         </header>
 
         <Step n={1} id="rig" title="The rig" lede={<>One 60 s load cycle, repeated {d.s.n_cycles.toLocaleString()} times while four components are set to known fault levels. {d.s.n_channels} channels record it.</>}>
@@ -120,6 +131,12 @@ export function App() {
         <Step n={8} id="proof" title="How we know it's right" lede={<>Neighbouring cycles are near-duplicates, so shuffled validation flatters. Scored on contiguous blocks, the accumulator drops from {pct(d.x.block_sensitivity.accumulator.shuffled)} to {pct(a.base.blocked)}.</>}>
           <ProofStep d={d} />
         </Step>
+
+        <Step n={9} id="solution" title="The solution" lede="A one-page recipe and a small tool. Give it a line's data and the cycles you call golden; it tells you whether to trust the centerline.">
+          <SolutionStep d={d} />
+        </Step>
+
+        <p className="closing">Built on public test-rig data. On a real line, week one is: run the contract, collect golden cycles per context, hand back the recipe.</p>
 
         <footer className="foot">
           <p>Data: N. Helwig, E. Pignanelli, A. Schütze (2015), <i>Condition monitoring of hydraulic systems</i>, UCI ML Repository, doi:10.24432/C5CW21, licensed CC BY 4.0. Full dataset, no subsetting; results precomputed by the pipeline in this repository.</p>
