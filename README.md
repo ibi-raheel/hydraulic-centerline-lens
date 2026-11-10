@@ -117,7 +117,7 @@ pipeline/
   run_extended.py  calibration, physics, CIs, value, mutations -> extended.json
   accept.py        the acceptance tool (see SOLUTION.md)
   tests/           36 pytest tests: hand calculations, synthetic recoveries, output checks
-src/               Vite + React demo, an 8-step guided walk through the results
+src/               Vite + React demo, a 9-step guided walk through the results
 public/data/       precomputed results the demo reads
 METHOD.md          equations, assumptions, validation, full results
 SOLUTION.md        the acceptance recipe, decision thresholds and a week-1 plan

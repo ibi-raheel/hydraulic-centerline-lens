@@ -141,8 +141,8 @@ export function App() {
         <p className="closing">Built on public test-rig data, so these thresholds are this rig's. On a real line, week one re-measures them: run the contract, collect golden cycles per context, hand back the recipe with that line's numbers.</p>
 
         <footer className="foot">
-          <p>Data: N. Helwig, E. Pignanelli, A. Schütze (2015), <i>Condition monitoring of hydraulic systems</i>, UCI ML Repository, doi:10.24432/C5CW21, licensed CC BY 4.0. Full dataset, no subsetting; results precomputed by the pipeline in this repository.</p>
-          <p>Built by Ibi Raheel, mechanical engineer building AI tools. More work at <a href="https://ibiraheel.com">ibiraheel.com</a>.</p>
+          <p>Data: N. Helwig, E. Pignanelli, A. Schütze (2015), <i>Condition monitoring of hydraulic systems</i>, UCI ML Repository, <a href="https://doi.org/10.24432/C5CW21">doi:10.24432/C5CW21</a>, licensed CC BY 4.0. Full dataset, no subsetting; results precomputed by the pipeline in this repository.</p>
+          <p>Built by Ibi Raheel, mechanical engineer building AI tools. More work at <a href="https://ibiraheel.com">ibiraheel.com</a>. Code, method and tests on <a href="https://github.com/ibi-raheel/hydraulic-centerline-lens">GitHub</a>.</p>
         </footer>
       </main>
     </>
